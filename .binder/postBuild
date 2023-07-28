@@ -7,6 +7,9 @@ jlpm build
 
 python -m pip install -e . --ignore-installed --no-deps --no-build-isolation
 
+jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
+
 jupyter labextension develop . --overwrite
 
 jupyter labextension list
+jupyter labextension list | grep -iE "@marketsquare/jupyterlab_robotmode.*ok"
