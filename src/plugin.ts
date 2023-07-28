@@ -1,11 +1,11 @@
 /*
-  Copyright (c) 2022 MarketSquare
+  Copyright (c) 2023 MarketSquare
   Distributed under the terms of the BSD-3-Clause License
 */
 
 import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { LabIcon } from '@jupyterlab/ui-components';
-import { ICodeMirror } from '@jupyterlab/codemirror';
+import { IEditorLanguageRegistry } from '@jupyterlab/codemirror';
 import { ICommandPalette } from '@jupyterlab/apputils';
 import { ILauncher } from '@jupyterlab/launcher';
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
@@ -45,9 +45,9 @@ const CONTEXT_SELECTOR = '.jp-DirListing-content';
 const modePlugin: JupyterFrontEndPlugin<void> = {
   id: MODE_PLUGIN_ID,
   autoStart: true,
-  requires: [ICodeMirror],
-  activate: (app: JupyterFrontEnd, codeMirror: ICodeMirror) => {
-    defineRobotMode(codeMirror);
+  requires: [IEditorLanguageRegistry],
+  activate: (app: JupyterFrontEnd, languages: IEditorLanguageRegistry) => {
+    defineRobotMode(languages);
   },
 };
 
@@ -92,7 +92,9 @@ function makePlugin(
         icon: (args) => (args['isPalette'] ? null : icon),
         execute: async (args) => {
           const cwd =
-            args['cwd'] ?? browserFactory?.defaultBrowser.model.path ?? undefined;
+            args['cwd'] ??
+            browserFactory?.tracker.currentWidget.model.path ??
+            undefined;
           const model = await commands.execute('docmanager:new-untitled', {
             path: cwd,
             type: 'file',

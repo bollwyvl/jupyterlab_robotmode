@@ -1,7 +1,9 @@
 __pycache__/
+_prefix/
 .ipynb_checkpoints/
 .ruff_cache/
 .yarn-packages/
+.yarn/
 *.egg-info/
 *.tsbuildinfo
 coverage/

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -eux
 
-jlpm --prefer-offline --ignore-optional
+jlpm
 
 jlpm build
 
-SKIP_POST_INSTALL=1 python -m pip install -e . --ignore-installed --no-deps
+python -m pip install -e . --ignore-installed --no-deps --no-build-isolation
 
 jupyter labextension develop . --overwrite
 

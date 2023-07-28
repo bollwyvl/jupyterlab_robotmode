@@ -1,23 +1,26 @@
 /*
-  Copyright (c) 2022 MarketSquare
+  Copyright (c) 2023 MarketSquare
   Distributed under the terms of the BSD-3-Clause License
 */
 
 /*
-  An implementation of syntax highlighting for robot framework 3.1.
+  An implementation of syntax highlighting for robot framework 6.1.
 
-  http://robotframework.org/robotframework/3.1/RobotFrameworkUserGuide.html
+  http://robotframework.org/robotframework/6.1/RobotFrameworkUserGuide.html
 
   When necessary, the source code is consulted and ultimately trusted:
 
   https://github.com/robotframework/robotframework
 */
 
-import { ICodeMirror } from '@jupyterlab/codemirror';
+import { IEditorLanguageRegistry } from '@jupyterlab/codemirror';
 
-import type { ISimpleState, ISimpleMeta } from 'codemirror';
+import { StreamLanguage, LanguageSupport } from '@codemirror/language';
+import { simpleMode } from '@codemirror/legacy-modes/mode/simple-mode';
 
 import { MIME_TYPE, MODE_LABEL, MODE_NAME, EXTENSIONS } from './tokens';
+
+import { ISimpleState, ISimpleTopState, ISimpleLanguageData } from './types';
 
 /** Our custom state. */
 type TRobotState = ISimpleState<TState, TT>;
@@ -788,26 +791,25 @@ states.variable_index = [
 ];
 
 /** the actual exported function that will install the mode in CodeMirror */
-export function defineRobotMode({ CodeMirror }: ICodeMirror) {
-  const meta: ISimpleMeta<TState, TT> = {
-    meta: {
+export function defineRobotMode(languages: IEditorLanguageRegistry) {
+  const meta: ISimpleLanguageData<TState, TT> = {
+    languageData: {
       dontIndentStates: ['comment'],
-      lineComment: '#',
+      ...({ lineComment: '#' } as any),
     },
   };
+  console.warn(`TODO: meta`, meta);
 
-  CodeMirror.defineSimpleMode<TState, TT>(MODE_NAME, {
-    ...states,
-    // @ts-ignore: There is a compilation error for some reason
-    meta,
-  });
-
-  CodeMirror.defineMIME(MIME_TYPE, MODE_NAME);
-
-  CodeMirror.modeInfo.push({
-    ext: EXTENSIONS,
+  languages.addLanguage({
     mime: MIME_TYPE,
-    mode: MODE_NAME,
-    name: MODE_LABEL,
+    name: MODE_NAME,
+    extensions: EXTENSIONS,
+    displayName: MODE_LABEL,
+    load: async () => {
+      const mode = simpleMode({ ...states } as ISimpleTopState<TState, TT>);
+      const parser = StreamLanguage.define(mode);
+      const languageSupport = new LanguageSupport(parser);
+      return languageSupport;
+    },
   });
 }
