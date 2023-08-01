@@ -112,7 +112,7 @@ function makePlugin(
         command,
         args: { isContextMenu: true },
         selector: CONTEXT_SELECTOR,
-        rank: 3,
+        rank: 70,
       });
 
       // add to the launcher
@@ -120,7 +120,7 @@ function makePlugin(
         launcher.add({
           command,
           category: LAUNCHER_CATEGORY,
-          rank: 1,
+          rank: 20,
         });
       }
 
@@ -135,7 +135,7 @@ function makePlugin(
 
       // add to the menu
       if (menu) {
-        menu.fileMenu.newMenu.addGroup([{ command }], 30);
+        menu.fileMenu.newMenu.addGroup([{ command }], 70);
       }
     },
   };

@@ -798,7 +798,6 @@ export function defineRobotMode(languages: IEditorLanguageRegistry) {
       ...({ lineComment: '#' } as any),
     },
   };
-  console.warn(`TODO: meta`, meta);
 
   languages.addLanguage({
     mime: MIME_TYPE,
@@ -806,7 +805,7 @@ export function defineRobotMode(languages: IEditorLanguageRegistry) {
     extensions: EXTENSIONS,
     displayName: MODE_LABEL,
     load: async () => {
-      const mode = simpleMode({ ...states } as ISimpleTopState<TState, TT>);
+      const mode = simpleMode({ ...states, ...meta } as ISimpleTopState<TState, TT>);
       const parser = StreamLanguage.define(mode);
       const languageSupport = new LanguageSupport(parser);
       return languageSupport;
